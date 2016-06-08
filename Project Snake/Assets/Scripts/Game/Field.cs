@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 public class Field : MonoBehaviour {
 
-    public const int FieldWidth = 9; //Длина поля
+    public const int FieldWidth = 16; //Длина поля
     public const int FieldHeight = 9; //Ширина поля
     const int RandomXMargin = 2; //Отступ по оси Х при рандомизации позиции
     const int RandomYMargin = 1; //Отступ по оси Y при рандомизации позиции
