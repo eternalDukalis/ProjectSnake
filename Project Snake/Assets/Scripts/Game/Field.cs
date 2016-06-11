@@ -52,10 +52,10 @@ public class Field : MonoBehaviour {
         return !OccupiedCells.Contains(position); //Возвращаем, нет ли клетки в списке занятых
     }
 
-    static public Vector2 RandomPosition(bool withMargin) //Функция расчёт случайной позиции на поле
+    static public Vector3 RandomPosition(bool withMargin) //Функция расчёт случайной позиции на поле
     {
         int x = Random.Range(RandomXMargin * withMargin.GetHashCode(), FieldWidth - RandomXMargin * withMargin.GetHashCode() - 1); //Рассчитываем координату Х
-        int y = Random.Range(RandomYMargin * withMargin.GetHashCode(), FieldHeight - RandomYMargin * withMargin.GetHashCode() - 1); //Рассчитываем координату Y
-        return new Vector2(x, y); //Возвращаем результат
+        int z = Random.Range(RandomYMargin * withMargin.GetHashCode(), FieldHeight - RandomYMargin * withMargin.GetHashCode() - 1); //Рассчитываем координату Z
+        return new Vector3(x, 0, z); //Возвращаем результат
     }
 }

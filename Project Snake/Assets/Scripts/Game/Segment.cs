@@ -4,10 +4,11 @@ using System.Collections;
 public class Segment : MonoBehaviour {
 
     public float MoveTime = 0.3f; //Время передвижения
+    public float Margin = 0.1f; //Отступ
     public Settings.Side Direction; //Направление движения
 	void Start ()
     {
-	
+        
 	}
 	
 	void Update ()
@@ -15,6 +16,12 @@ public class Segment : MonoBehaviour {
         if (Input.GetKeyDown(KeyCode.Space))
             Move();
 	}
+
+    public void Place(Vector3 startPosition) //Метод установки сегмента
+    {
+        transform.position = startPosition + new Vector3((float)Settings.CellSize / 2, 0, (float)Settings.CellSize / 2); //Установка стартовой позиции
+        transform.localScale = new Vector3(Settings.CellSize - Margin, Settings.CellSize - Margin, Settings.CellSize - Margin); //Установка размера
+    }
 
     public void Move() //Метод перемещения сегмента
     {
