@@ -25,12 +25,10 @@ public class Field : MonoBehaviour {
             Debug.LogError("Попытка обратиться к неинициализированному спискку занятых клеток"); //Выводим ошибку
             return; //Прерываем метод
         }
-        if (OccupiedCells.Contains(position)) //Если клетка уже в списке занятых
+        if (!OccupiedCells.Contains(position)) //Если клетки нет в списке занятых
         {
-            Debug.LogError("Попытка занять уже занятую клетку"); //Выводим ошибку
-            return; //Прерываем метод
+            OccupiedCells.Add(position); //Добавляем клетку в список занятых
         }
-        OccupiedCells.Add(position); //Добавляем клетку в список занятых
     }
 
     static public void FreeCell(Vector2 position) //Метод освобождения клетки поля
@@ -40,10 +38,9 @@ public class Field : MonoBehaviour {
             Debug.LogError("Попытка обратиться к неинициализированному спискку занятых клеток"); //Выводим ошибку
             return; //Прерываем метод
         }
-        if (!OccupiedCells.Contains(position)) //Если клетки нет в списке занятых
+        if (OccupiedCells.Contains(position)) //Если клетка есть в списке занятых
         {
-            Debug.LogError("Попытка освободить незанятую клетку"); //Выводим ошибку
-            return; //Прерываем метод
+            OccupiedCells.Remove(position); //Удаляем клетку из списка занятых
         }
     }
 

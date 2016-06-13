@@ -17,6 +17,8 @@ public class Snake : MonoBehaviour {
         }
     } //Голова
     Settings.Side Direction = Settings.Side.Top; //Направление следующего перемещения
+    Vector2 LastPosition; //Предыдущая позиция последнего сегмента
+    Settings.Side LastDirection; //Предыдущее направление последнего сегмента
     void Start ()
     {
         Segments = new List<Segment>(); //Инициализируем список сегментов
@@ -36,6 +38,12 @@ public class Snake : MonoBehaviour {
             Direction = Settings.Side.Top; //Следующее перемещение - вверх
         if ((Input.GetKeyDown(KeyCode.DownArrow)) && (Head.Direction != Settings.Side.Top)) //Если нажата стрелка вниз и движение не вверх
             Direction = Settings.Side.Bottom; //Следующее перемещение - вниз
+        if (Head.NeedToGrow)
+        {
+            Segment seg = InstSegment(new Vector3(LastPosition.x, 0, LastPosition.y));
+            seg.Direction = LastDirection;
+            Segments.Add(seg);
+        }
     }
 
     IEnumerator movement() //Корутина перемещения
@@ -51,6 +59,8 @@ public class Snake : MonoBehaviour {
                 Settings.Side prevDir = Head.Direction; //Направление предыдущего сегмента
                 foreach (Segment x in Segments) //Для всех сегментов в списке
                 {
+                    LastPosition = x.Position; //Записываем позицию
+                    LastDirection = x.Direction; //Записываем направление
                     x.Move(); //Перемещаем сегмент
                     Settings.Side cur = x.Direction; //Получаем направление сегмента
                     if (cur != prevDir) //Если направление не совпадает с направлением предыдущего сегмента
