@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using UnityEngine.SceneManagement;
 
 public class Field : MonoBehaviour {
 
@@ -17,6 +18,11 @@ public class Field : MonoBehaviour {
     {
 	
 	}
+
+    public virtual void Restart() //Метод игры заново
+    {
+        SceneManager.LoadScene("game"); //Загружаем сцену
+    }
 
     static public void OccupyCell(Vector2 position) //Метод занятия клетки поля
     {

@@ -6,7 +6,7 @@ public class Fruit : MonoBehaviour {
     public float Margin = 0.15f; //Отступ
 	void Start ()
     {
-        Place(new Vector3(2, 0, 3));
+        Place(Field.RandomPosition(false));
 	}
 	
 	void Update ()

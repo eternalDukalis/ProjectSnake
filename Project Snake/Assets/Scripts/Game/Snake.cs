@@ -6,6 +6,8 @@ public class Snake : MonoBehaviour {
 
     public GameObject SegmentObject; //Префаб сегмента
     public float MovingInterval = 1; //Интервал между перемещениями
+    public Material HeadMaterial; //Материал головы
+    public GameObject RestartScreen; //Экран игры заново
     List<Segment> Segments; //Список сегментов
     Segment Head
     {
@@ -19,13 +21,15 @@ public class Snake : MonoBehaviour {
     Settings.Side Direction = Settings.Side.Top; //Направление следующего перемещения
     Vector2 LastPosition; //Предыдущая позиция последнего сегмента
     Settings.Side LastDirection; //Предыдущее направление последнего сегмента
+    IEnumerator mainCor; //Корутина
     void Start ()
     {
         Segments = new List<Segment>(); //Инициализируем список сегментов
         Vector3 startPosition = Field.RandomPosition(true); //Получаем стартовую позицию
         Segments.Add(InstSegment(startPosition)); //Помещаем голову
+        Segments.ToArray()[0].SetMaterial(HeadMaterial); //Устанавливаем материал голове
         Segments.Add(InstSegment(startPosition - new Vector3(0, 0, 1))); //Помещаем ещё один сегмент
-        StartCoroutine(movement()); //Начинаем движение
+        StartCoroutine(mainCor = movement()); //Начинаем движение
 	}
 
     void Update()
@@ -38,11 +42,16 @@ public class Snake : MonoBehaviour {
             Direction = Settings.Side.Top; //Следующее перемещение - вверх
         if ((Input.GetKeyDown(KeyCode.DownArrow)) && (Head.Direction != Settings.Side.Top)) //Если нажата стрелка вниз и движение не вверх
             Direction = Settings.Side.Bottom; //Следующее перемещение - вниз
-        if (Head.NeedToGrow)
+        if (Head.NeedToGrow) //Если нужно вырасти
         {
-            Segment seg = InstSegment(new Vector3(LastPosition.x, 0, LastPosition.y));
-            seg.Direction = LastDirection;
-            Segments.Add(seg);
+            Segment seg = InstSegment(new Vector3(LastPosition.x, 0, LastPosition.y)); //Создаём новый сегмент
+            seg.Direction = LastDirection; //Устанавливаем ему направление
+            Segments.Add(seg); //Добавляем в список
+        }
+        if (Head.End) //Если конец
+        {
+            StopCoroutine(mainCor); //Останавливаем корутину
+            RestartScreen.SetActive(true); //Показываем экран игры заново
         }
     }
 
@@ -76,7 +85,7 @@ public class Snake : MonoBehaviour {
     {
         GameObject obj = Instantiate(SegmentObject); //Инстанциируем объект
         obj.transform.SetParent(transform, false); //Устанавливаем родительский объект
-        obj.GetComponent<Segment>().Place(startPosition); //Устанавливаем сегмент
+        obj.GetComponent<Segment>().Place(startPosition, Segments.Count); //Устанавливаем сегмент
         return obj.GetComponent<Segment>(); //Возвращаем компонент Segment
     }
 }

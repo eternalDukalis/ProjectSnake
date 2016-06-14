@@ -7,6 +7,7 @@ public class Segment : MonoBehaviour {
     public float Margin = 0.1f; //Отступ
     public Settings.Side Direction; //Направление движения
     public Vector2 Position; //Позиция сегмента
+    int Number = 0; //Номер сегмента
     Rigidbody rigid; //Компонент Rigidbody
     public bool NeedToGrow
     {
@@ -17,7 +18,19 @@ public class Segment : MonoBehaviour {
             return res;
         }
     } //Нужно ли вырасти
+    public bool End
+    {
+        get
+        {
+            bool res = _end;
+            _end = false;
+            return res;
+        }
+    } //Конец ли
     bool _grow = false; //Нужно ли вырасти
+    bool _end = false; //Конец ли
+    float epsilon = 0.3f; //Минимальное время между двумя поглощениями
+    float time = 0; //Счётчик времени
 	void Start ()
     {
         rigid = GetComponent<Rigidbody>(); //Находим компонент Rigidbody
@@ -25,11 +38,12 @@ public class Segment : MonoBehaviour {
 	
 	void Update ()
     {
-        
+        time += Time.deltaTime; //Увеличиваем 
 	}
 
-    public void Place(Vector3 startPosition) //Метод установки сегмента
+    public void Place(Vector3 startPosition, int num) //Метод установки сегмента
     {
+        Number = num; //Записываем номер
         Position = new Vector2(startPosition.x, startPosition.z); //Записываем позицию
         Field.OccupyCell(Position); //Занимаем клетку
         transform.position = startPosition + new Vector3((float)Settings.CellSize / 2, 0, (float)Settings.CellSize / 2); //Установка стартовой позиции
@@ -81,10 +95,28 @@ public class Segment : MonoBehaviour {
     void OnTriggerEnter(Collider collider) //При входе в триггер
     {
         Fruit fruit = collider.gameObject.GetComponent<Fruit>(); //Получаем компонент Fruit объекта
-        if (fruit != null) //Если компонент Fruit существует
+        Segment seg = collider.gameObject.GetComponent<Segment>(); //Получаем компонент Segment объекта
+        WallPosition wall = collider.gameObject.GetComponent<WallPosition>(); //Получаем компонент WallPosition объекта
+        if ((fruit != null) && (time >= epsilon)) //Если компонент Fruit существует и прошло достаточно времени
         {
+            time = 0; //Обнуляем счётчик
             fruit.MakeEaten(); //Съедаем фрукт
             _grow = true; //Оставляем сигнал о том, что нужно вырасти
+            return; //Прерываем
         }
+        if (seg != null) //Если компонент Segment существует
+        {
+            if (Mathf.Abs(Number - seg.Number) > 1) //Если сегменты не соседи
+                _end = true; //Конец
+        }
+        if (wall != null) //Если компонент WallPosition существует
+        {
+            _end = true; //Конец
+        }
+    }
+
+    public void SetMaterial(Material material) //Метод установки материал
+    {
+        GetComponent<MeshRenderer>().material = material; //Устанавливаем материал
     }
 }
